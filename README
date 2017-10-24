@@ -1,0 +1,15 @@
+DA INSTALLARE:
+-installare Git Bash for windows
+-scaricare il progetto da GitHub
+-installare npm
+-installare nodejs
+
+CONFIGURAZIONE:
+-aprire Git Bash
+-cd percorso progetto BayesianNetwork
+-npm install nodemon
+-npm init
+-npm install express --save
+-npm install vis --save
+-npm start
+-aprire Chrome -> localhost:8080
