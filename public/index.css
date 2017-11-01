@@ -82,3 +82,38 @@
     margin-left: 10px;
     width: 640px;
 }
+.btn-circle-sm {
+  width: 35px;
+  height: 35px;
+  text-align: center;
+  padding: 2px 0;
+  font-size: 20px;
+  line-height: 1.65;
+  border-radius: 30px;
+}
+#help
+{
+    margin-left: 220px;
+}
+.glyphicon-question-sign
+{
+    margin-left: 0px;
+}
+#help_message
+{
+    margin-left: 20px;
+    width: 800px;
+    position: absolute;
+    margin-top: 10px;
+    display: none;
+}
+.close.hover
+{
+    cursor: pointer; 
+}
+.help_text
+{
+    position: absolute;
+    margin-left: -41px;
+    margin-top: 70px;
+}

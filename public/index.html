@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Bayesian Networ</title>
+    <title>Bayesian Network</title>
 
     <script type="text/javascript" src="vis/dist/vis.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -18,18 +18,25 @@
 </head>
 
 <body>
-    <image onclick="window.location.href = 'http://visjs.org/';" class="image_logo" src="https://www.uplabs.com/tools/vis_js.png">
+    <image onclick="window.location.href = 'http://visjs.org/';" class="image_logo" src="logo.png">
     <div class="btn-group">
-        <button type="button" id="button_create_node" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>     Create node</button>
-        <button type="button" id="button_create_arc" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i>     Create arc</button>
+        <button type="button" id="button_create_node" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>     Create Node</button>
+        <button type="button" id="button_create_arc" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i>     Create Arc</button>
         <button type="button" id="button_delete_node" class="btn btn-primary"><i class="glyphicon glyphicon-remove-circle"></i>     Delete Node</button>
         <button type="button" id="button_delete_arc" class="btn btn-primary"><i class="glyphicon glyphicon-minus"></i>     Delete Arc</button>
         <button type="button" id="button_set_properties" class="btn btn-primary"><i class="glyphicon glyphicon-pencil"></i>      Set Properties</button>
         <button type="button" id="button_probability_table" class="btn btn-primary"><i class="glyphicon glyphicon-list-alt"></i>      Probability Table</button>
-        <button type="button" id="button_query" class="btn btn-primary"><i class="glyphicon glyphicon-question-sign"></i>     Query</button>
+        <button type="button" id="button_query" class="btn btn-primary"><i class="glyphicon glyphicon-question-sign"></i>     Query</button>        
+    </div>
+    
+    <a id="help" data-toggle="modal" data-target="#myModal" class="btn btn-circle-sm btn-primary"><span class="glyphicon glyphicon-question-sign"></span> </a>
+    <h8 class="help_text">help</h8>
+    <div id="help_message" class="alert alert-info fade in">
+        
     </div>
     
     <div id="graph"></div>
+   
     <div id="table">
         <h3 id="name_choice">select button please..</h3>
         
@@ -113,6 +120,7 @@
     
 
     <script type="text/javascript">
+                
         
         //esempio per debug NODES
         //{id: 1, label: 'Node 1', domain: 'T,F,G', title: "", color:{background:"",border:"black"},},
@@ -235,6 +243,7 @@
         var array_keys_edges = [];
         var count_id_nodes=0;
         var count_id_edges=0;
+        help_flag=0;
         
         //voglio aggiungere un nuovo nodo
         $("#button_create_node").click(function() {
@@ -248,6 +257,7 @@
             $("#div_set_properties").hide();
             $("#div_probability_table").hide();
             $("#div_query").hide();
+            $("#help_message").hide();
             $("#div_create_nodes").show();
         });
         
@@ -271,7 +281,7 @@
             
             if(label==="" || domain==="" || domain.toString().split(',').length<2 || domain.slice(-1)==="," || isExistNode(label)>0)
                 $("#error_dialog").show();
-            else
+            else 
             {
                 //li creo dinamicamente in ordine alfabetico
                 if(auto_create===1 && label.length < 2)
@@ -325,6 +335,7 @@
             $("#div_set_properties").hide();
             $("#div_probability_table").hide();
             $("#div_query").hide();
+            $("#help_message").hide();
             $("#div_create_arc").show();
             
             //azzero le variabili globali per la modalità mouse
@@ -333,6 +344,7 @@
             end=0;
             arc=0;
             flag_arc=0;
+            help_flag=0;
         });
         
         $("#save_create_arc").click(function() {
@@ -486,7 +498,9 @@
             $("#div_create_arc").hide();
             $("#div_probability_table").hide();
             $("#div_query").hide();
+            $("#help_message").hide();
             $("#div_delete_node").show();
+            help_flag=0;
         });
         
         $("#save_delete_node").click(function() {
@@ -529,6 +543,7 @@
             $("#div_delete_node").hide();
             $("#div_probability_table").hide();
             $("#div_query").hide();
+            $("#help_message").hide();
             $("#div_delete_arc").show();
             
             //azzero le variabili globali per la modalità mouse
@@ -537,6 +552,7 @@
             end=0;
             arc=0;
             flag_arc=0;
+            help_flag=0;
         });
         
         $("#save_delete_arc").click(function() {
@@ -593,7 +609,9 @@
         $("#div_delete_arc").hide();
         $("#div_probability_table").hide();
         $("#div_query").hide();
+        $("#help_message").hide();
         $("#div_set_properties").show();
+        help_flag=0;
     });
     
     $("#save_set_properties").click(function() {
@@ -632,11 +650,13 @@
         $("#div_delete_arc").hide();
         $("#div_set_properties").hide();
         $("#div_query").hide();
+        $("#help_message").hide();
         $("#div_probability_table").show();
         
         indip=[];
         indip.push(getNodesIndip());
         color_nodes_indip();
+        help_flag=0;
     });
     
     //mi serve per sapere se ho cambiato riga o sono sempre nella stessa
@@ -684,8 +704,9 @@
             $("#div_set_properties").hide();
             $("#div_probability_table").hide();
             $("#div_create_arc").hide();
-            $("#div_query").show();
-             
+            $("#help_message").hide();
+            $("#div_query").show();  
+            help_flag=0;
         });
         
         //risolvo la query
@@ -1025,7 +1046,10 @@
         {
             html = "<tr>";
             for (var fieldCount = 0; fieldCount < column_table_body; fieldCount++) {
-                var str = "<input>";
+                if(fieldCount > 1)
+                    var str = "<input value=0.0>";
+                else
+                    var str = "<input value=0.5>";
                 html = html + "<td>" + str + "</td>";
             }
             html = html +"<td><button id='check_value' type='button' class='btn btn-secondary'>✔</button></td></tr>"; 
@@ -1040,7 +1064,7 @@
                 for (var fieldCount = 0; fieldCount < column_table_body; fieldCount++) {
                     if(array_column[fieldCount].toString() === node_id_selected.toString())
                     {
-                        var str = "<input>";
+                        var str = "<input value=0.5>";
                         html = html + "<td>" + str + "</td>";
                     }
                     else
@@ -1163,6 +1187,57 @@
             }
         }
     }
+    
+    //mi serve per mostrare l'help
+    var help_flag=0;
+    
+    $("#help").click(function() 
+    {
+        //per ogni voce del menu ho un help diverso ovviamente
+        var option_selected = $("#name_choice").text();
+        if(help_flag===0 && option_selected === "Create Node")
+        {
+            $("#help_message").html("1) assign <strong>Name</strong> to the node </br> 2) assign <strong>Domain</strong> to the node </br> 3) click <strong>Create!</strong></br></br><strong>TIPS</strong> if name starts with 'A' 🡲 create alphabetical order </br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;else 🡲 create numerical order");
+            $("#help_message").show();
+            help_flag=1;
+        }
+        else if(help_flag===0 && option_selected === "Create Arc")
+        {
+            $("#help_message").html("1) click it the <strong>first node</strong> (from) </br> 2) click it the <strong>second node</strong> (to) </br></br> (click outside for deselect your chioce)");
+            $("#help_message").show();
+            help_flag=1;
+        }
+        else if(help_flag===0 && option_selected === "Delete Node")
+        {
+            $("#help_message").html("Click into the <strong>node to be destroyed</strong>");
+            $("#help_message").show();
+            help_flag=1;
+        }
+        else if(help_flag===0 && option_selected === "Delete Arc")
+        {
+            $("#help_message").html("1) click it the <strong>first node</strong> (from) </br> 2) click it the <strong>second node</strong> (to) </br></br> (click outside for deselect your chioce)");
+            $("#help_message").show();
+            help_flag=1;
+        }
+        else if(help_flag===0 && option_selected === "Set Properties")
+        {
+            $("#help_message").html("1) select <strong>node to modify </strong></br> 2) change his value: <strong>name</strong> or <strong>domain</strong></br> 3) click to Change!");
+            $("#help_message").show();
+            help_flag=1;
+        }
+        else if(help_flag===0 && option_selected === "Probability Table")
+        {
+            $("#help_message").html("1) Click into the <strong>node</strong></br> 2) <strong>compile</strong> his probability table</br> 3) <strong>check</strong> the insert value and <strong>save</strong> the row");
+            $("#help_message").show();
+            help_flag=1;
+        }
+        else
+        {
+            $("#help_message").hide();
+            help_flag=0;
+        }
+    });
+    
       
     </script>
 </body>
