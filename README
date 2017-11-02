@@ -6,6 +6,7 @@ DA INSTALLARE:
 CONFIGURAZIONE:
 -aprire Prompt dei Comandi
 -cd percorso progetto BayesianNetwork
+-npm install nodemon
 -npm init
 -npm install express --save
 -npm install vis --save
